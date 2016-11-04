@@ -3,15 +3,21 @@
 var socket = require('socket.io-client')('http://localhost:9009');
 var color = require('tinycolor2');
 
-var framerate = 60;
+// config
+var framerate = 60;     // frames per second
+var numLeds = 91;       // number of LEDs in your setup
+var fade = 0.5;         // how much to darken every led per frame
+var maxSpeed = 0.15;    // max speed of dots
+var minSpeed = 0.025;   // min speed of dots
+let colors = [          // dot color (randomly selected from list)
+    color('red'), color('#975')
+];
 
-// number of LEDs in your setup
-var numLeds = 91;
+// arrays for all leds and traveling dots
 var leds = Array.from(Array(numLeds)).map(function() {
     return color();
 });
-
-var fade = 0.5;
+var dots = [];
 
 function fadeOut() {
     for (var i = 0; i < numLeds; i++) {
@@ -26,8 +32,6 @@ function fadeColor(color, amount) {
         b: color.b * amount
     }
 }
-
-var dots = [];
 
 function xmasLights() {
     fadeOut();
@@ -51,11 +55,6 @@ function xmasLights() {
     });
 }
 
-var maxSpeed = 0.15;
-var minSpeed = 0.025;
-
-let colors = [color('red'), color('#975')];
-
 function spawnLight() {
     let moveRight = Math.random() < 0.5;
     let speed = minSpeed + Math.random() * (maxSpeed - minSpeed);
@@ -70,7 +69,6 @@ function spawnLight() {
 
 setInterval(function() {
     if (Math.random() < 0.01) {
-        console.log('spawning light');
         spawnLight();
     }
 
