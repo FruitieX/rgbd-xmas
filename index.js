@@ -10,8 +10,12 @@ var fade = 0.5;         // how much to darken every led per frame
 var maxSpeed = 0.15;    // max speed of dots
 var minSpeed = 0.025;   // min speed of dots
 let colors = [          // dot color (randomly selected from list)
-    color('red'), color('#975')
+    color('red'), color('#A65')
 ];
+let maxDots = 15;       // maximum amount of dots at once
+
+// TODO: this led is fscked
+let disabledLed = 40;
 
 // arrays for all leds and traveling dots
 var leds = Array.from(Array(numLeds)).map(function() {
@@ -56,6 +60,10 @@ function xmasLights() {
 }
 
 function spawnLight() {
+    if (dots.length >= maxDots) {
+        return;
+    }
+
     let moveRight = Math.random() < 0.5;
     let speed = minSpeed + Math.random() * (maxSpeed - minSpeed);
         speed *= moveRight ? 1 : -1;
@@ -67,14 +75,27 @@ function spawnLight() {
     });
 }
 
+function disableBroken() {
+    leds[disabledLed] = color('black');
+    /*
+    for (let i = 0; i < disabledLed; i++) {
+        leds[i] = color('black');
+    }
+    */
+}
+
 setInterval(function() {
     if (Math.random() < 0.01) {
         spawnLight();
     }
 
     xmasLights();
+    disableBroken();
     socket.emit('frame', {
         id: 0,
         colors: leds.map(led => (led.toRgb()))
     });
 }, 1000 / framerate);
+
+// spawn a light right away
+spawnLight();
