@@ -1,204 +1,82 @@
 'use strict';
 
 var socket = require('socket.io-client')('http://localhost:9009');
-var _ = require('underscore');
-var one = require('onecolor');
+var color = require('tinycolor2');
 
 var framerate = 60;
 
 // number of LEDs in your setup
 var numLeds = 91;
 var leds = Array.from(Array(numLeds)).map(function() {
-    return {
-        red: 0,
-        green: 0,
-        blue: 0
-    };
+    return color();
 });
 
-var fade = 0.95;
+var fade = 0.5;
 
 function fadeOut() {
     for (var i = 0; i < numLeds; i++) {
-        leds[i].red *= fade;
-        leds[i].green *= fade;
-        leds[i].blue *= fade;
+        leds[i].darken(fade);
     }
 }
 
 function fadeColor(color, amount) {
     return {
-        red: color.red * amount,
-        green: color.green * amount,
-        blue: color.blue * amount
+        r: color.r * amount,
+        g: color.g * amount,
+        b: color.b * amount
     }
 }
 
-/*
-
-function xmasColor() {
-    return Math.random() < 0.5 ?  {
-        red: 255,
-        green: 0,
-        blue: 0
-    } : {
-        red: 128,
-        green: 128,
-        blue: 128
-    }
-}
-
-let fadingInColor = null;
-let fadingInLed = null;
-
-function addLight(pos) {
-    let fadingInColor = xmasColor();
-    let fadingInLed = pos;
-
-    leds[pos] = color;
-
-    for (var i = 1; i < 10; i++) {
-        // above led
-        if (pos + i < numLeds) {
-            leds[pos + i] = fadeColor(color, 1 / i);
-        }
-        // below led
-        if (pos - i >= 0) {
-            leds[pos - i] = fadeColor(color, 1 / i);
-        }
-    }
-}
+var dots = [];
 
 function xmasLights() {
     fadeOut();
 
-    if (fadingInLed !== null) {
-        leds[fadingInLed].red = Math.min(leds[fadingInLed].red, color.red);
-        leds[fadingInLed].green = Math.min(leds[fadingInLed].red, color.green);
-        leds[fadingInLed].blue = Math.min(leds[fadingInLed].red, color.blue);
+    dots.forEach((dot, index) => {
+        let ledPos = Math.floor(dot.pos);
+        leds[ledPos] = color.mix(dot.color, leds[ledPos], 90);
 
-        for (var i = 1; i < 10; i++) {
-            // above led
-            if (pos + i < numLeds) {
-                leds[pos + i] = fadeColor(color, 1 / i);
-            }
-            // below led
-            if (pos - i >= 0) {
-                leds[pos - i] = fadeColor(color, 1 / i);
-            }
+        let dir = dot.speed > 0 ? 1 : -1;
+        if (dot.pos + dir >= 0 && dot.pos + dir < numLeds) {
+            let fade = 1 - Math.abs((dir > 0 ? Math.ceil(dot.pos) : Math.floor(dot.pos)) - dot.pos);
+            leds[ledPos + dir] = color.mix(dot.color, leds[ledPos + dir], 20 * (5 - fade));
         }
-    }
 
-    // Select new led
-    if (Math.random() < 0.02) {
-        // Add light with spread
-        addLight(Math.floor(Math.random() * numLeds));
-    }
+        dot.pos = dot.pos + dot.speed;
+    });
+
+    // remove out of bounds dots
+    dots = dots.filter((dot) => {
+        return dot.pos >= 0 && dot.pos <= numLeds - 1;
+    });
 }
-*/
 
-var dots = [{
-    pos: numLeds * Math.random(),
-    speed: 0.074,
-    color: {
-        red: 255,
-        green: 0,
-        blue: 0
-    }
-}, {
-    pos: numLeds * Math.random(),
-    speed: -0.163,
-    color: {
-        red: 64,
-        green: 64,
-        blue: 64
-    }
-}, {
-    pos: numLeds * Math.random(),
-    speed: 0.342,
-    color: {
-        red: 255,
-        green: 0,
-        blue: 0
-    }
-}, {
-    pos: numLeds * Math.random(),
-    speed: -0.078,
-    color: {
-        red: 255,
-        green: 0,
-        blue: 0
-    }
-}, {
-    pos: numLeds * Math.random(),
-    speed: -0.327,
-    color: {
-        red: 64,
-        green: 64,
-        blue: 64
-    }
-}];
-/*
-var dots = [{
-    pos: numLeds * Math.random(),
-    speed: 0.074,
-    color: {
-        red: 255,
-        green: 0,
-        blue: 0
-    }
-}, {
-    pos: numLeds * Math.random(),
-    speed: -0.163,
-    color: {
-        red: 64,
-        green: 64,
-        blue: 64
-    }
-}, {
-    pos: numLeds * Math.random(),
-    speed: 0.342,
-    color: {
-        red: 64,
-        green: 64,
-        blue: 64
-    }
-}, {
-    pos: numLeds * Math.random(),
-    speed: -0.078,
-    color: {
-        red: 255,
-        green: 0,
-        blue: 0
-    }
-}, {
-    pos: numLeds * Math.random(),
-    speed: -0.327,
-    color: {
-        red: 64,
-        green: 64,
-        blue: 64
-    }
-}];
-*/
+var maxSpeed = 0.15;
+var minSpeed = 0.025;
 
-function xmasLights() {
-    fadeOut();
+let colors = [color('red'), color('#975')];
 
-    dots.forEach(dot => {
-        leds[Math.floor(dot.pos)] = Object.assign({}, dot.color);
-        dot.pos = (dot.pos + dot.speed) % numLeds;
+function spawnLight() {
+    let moveRight = Math.random() < 0.5;
+    let speed = minSpeed + Math.random() * (maxSpeed - minSpeed);
+        speed *= moveRight ? 1 : -1;
 
-        if (dot.pos < 0) {
-            dot.pos = dot.pos + numLeds;
-        }
+    dots.push({
+        pos: moveRight ? 0 : numLeds -1,
+        speed: speed,
+        color: colors[Math.floor(Math.random() * colors.length)]
     });
 }
 
 setInterval(function() {
+    if (Math.random() < 0.01) {
+        console.log('spawning light');
+        spawnLight();
+    }
+
     xmasLights();
     socket.emit('frame', {
         id: 0,
-        colors: leds
+        colors: leds.map(led => (led.toRgb()))
     });
 }, 1000 / framerate);
