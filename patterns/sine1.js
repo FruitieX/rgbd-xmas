@@ -7,12 +7,12 @@ let leds = null;
 const red = color('red');
 const white = color({
     r: 255,
-    g: 192,
-    b: 172
+    g: 64,
+    b: 48
 });
 
-const period = 0.5;
-const maxSpeed = 4;
+const period = 0.25;
+const maxSpeed = Math.PI;
 const oscillatePeriod = 5000;
 
 function sine() {
@@ -20,7 +20,7 @@ function sine() {
     let offset = time / 1000 * maxSpeed % (2 * Math.PI);
     leds = leds.map((led, index) => {
         let fade = Math.sin(period * index + offset);
-        fade *= Math.sin(time / oscillatePeriod);
+        fade *= Math.min(1, 0.5 + Math.sin(time / oscillatePeriod));
         return color.mix(red, white, fade * 50 + 50);
     });
 }
