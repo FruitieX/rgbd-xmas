@@ -11,14 +11,16 @@ let fadeTime = 3000;
 
 // patterns
 let patterns = [
-    require('./patterns/sine1'),
+    require('./patterns/pulse'),
+    require('./patterns/sine3'),
     require('./patterns/sine2'),
+    require('./patterns/sine1'),
     require('./patterns/snowflakes'),
-    require('./patterns/traveling')
+    require('./patterns/traveling'),
 ];
 let old = null;
 let currentTime = new Date().getTime();
-let current = Math.floor(Math.random() * patterns.length);
+let current = 0;
 
 // TODO: this led is fscked
 let disabledLed = 40;
