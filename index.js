@@ -22,13 +22,6 @@ let old = null;
 let currentTime = new Date().getTime();
 let current = 0;
 
-// TODO: this led is fscked
-let disabledLed = 40;
-
-function disableBroken(leds) {
-    leds[disabledLed] = color('black');
-}
-
 setInterval(() => {
     old = current;
 
@@ -61,8 +54,6 @@ setInterval(function() {
     } else {
         leds = newLeds;
     }
-
-    disableBroken(leds);
 
     socket.emit('frame', {
         id: 0,
