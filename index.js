@@ -57,7 +57,7 @@ setInterval(function() {
 
     socket.emit('frame', {
         id: 0,
-        name: 'xmas',
+        name: 'Xmas',
         colors: leds.map(led => (led.toRgb()))
     });
 }, 1000 / framerate);
