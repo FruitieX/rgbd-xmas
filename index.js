@@ -5,7 +5,7 @@ var color = require('tinycolor2');
 
 // config
 var framerate = 60;     // frames per second
-var numLeds = 91;       // number of LEDs in your setup
+var numLeds = 90;       // number of LEDs in your setup
 let patternInterval = 1000 * 60;
 let fadeTime = 3000;
 
