@@ -6,9 +6,9 @@ let leds = null;
 
 const red = color('red');
 const white = color({
-    r: 128,
-    g: 72,
-    b: 64
+    r: 200,
+    g: 200,
+    b: 200
 });
 const black = color('black');
 

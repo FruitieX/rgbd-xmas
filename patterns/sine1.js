@@ -6,9 +6,9 @@ let leds = null;
 
 const red = color('red');
 const white = color({
-    r: 255,
-    g: 64,
-    b: 48
+    r: 200,
+    g: 170,
+    b: 150
 });
 
 const period = 0.25;

@@ -18,12 +18,12 @@ function snowflakes(leds) {
     leds.forEach((led, index) => {
         if (isFading(index)) {
             led._r = 255;
-            led._g = Math.max(1, Math.min(255, led._g + 10));
-            led._b = Math.max(1, Math.min(255, led._b + 10));
+            led._g = Math.max(1, Math.min(255, led._g + 20));
+            led._b = Math.max(1, Math.min(255, led._b + 20));
         } else {
             led._r = 255;
-            led._g *= 0.9;
-            led._b *= 0.9;
+            led._g *= 0.95;
+            led._b *= 0.95;
         }
     });
 }

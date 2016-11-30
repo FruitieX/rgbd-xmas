@@ -8,7 +8,7 @@ var fade = 0.5;         // how much to darken every led per frame
 var maxSpeed = 0.15;    // max speed of dots
 var minSpeed = 0.025;   // min speed of dots
 let colors = [          // dot color (randomly selected from list)
-    color('red'), color('#A65')
+    color('red'), color('white')
 ];
 let maxDots = 15;       // maximum amount of dots at once
 
