@@ -11,6 +11,13 @@ let fadeTime = 3000;
 
 // patterns
 let patterns = [
+    require('./patterns/circlesinusoid'),
+    require('./patterns/plasma5'),
+    //require('./patterns/plasma4'),
+    //require('./patterns/plasma3'),
+    //require('./patterns/plasma2'),
+    require('./patterns/travelingslow'),
+    require('./patterns/black'),
     require('./patterns/sine1'),
     require('./patterns/sine2'),
     require('./patterns/sine3'),
